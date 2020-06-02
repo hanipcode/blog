@@ -1,5 +1,5 @@
 ---
-title: "Blog baru dan kenapa pindah serverless"
+title: "Blog baru dan kenapa pindah static site"
 date: 2020-06-02T17:21:04+07:00
 draft: false
 toc: false
@@ -7,13 +7,13 @@ images:
 cover: "img/1.jpg"
 tags:
   - hugo
-  - serverless
+  - static site
   - about me
 ---
 
 ## Rumah baru
 sebelum ini website saya di host dengan stack vps  digital ocean dan blogging platform Ghost.
-Kali ini saya menggunakan stack yang agak berbeda karena saya memilih jalur serverless.
+Kali ini saya menggunakan stack yang agak berbeda karena saya memilih jalur static site.
 
 ## Mengapa pindah ?
 ada beberapa alasan sih. alasan sok keren nya > *belajar stack baru*. padahal sih...
@@ -52,4 +52,4 @@ dan juga kayanya bakal nanti kepentok scaling issue di netlify nya. versi gratis
 tapi kalau buat web yang lebih kompleks  perlu mikir lagi. dan kampret nya adalah provider macam netlify dan firebase ini ngasih gratisan nya baik tapi begitu  udah lewatn fair usage nya bisa tau-tau jadi mahal.
 
 
-Anda tertarik nyoba serverless ? tertarik kah ketika misal saya buat tutorial untuk implement stack semacam ini ?
+Anda tertarik nyoba static site ? tertarik kah ketika misal saya buat tutorial untuk implement stack semacam ini ?
