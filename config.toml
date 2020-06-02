@@ -1,0 +1,26 @@
+baseURL = "http://example.org/"
+languageCode = "en-us"
+title = "Muhammad Hanif Sungkar"
+theme = "hello-friend-ng"
+
+[params]
+homeSubtitle = "Curious Software Engineer"
+  [params.logo]
+    logoText="~/"
+  [[params.social]]
+    name="facebook"
+    url ="https://facebook.com/hanifeij"
+  [[params.social]]
+    name="linkedin"
+    url="https://linkedin.com/in/hanifeij"
+  [[params.social]]
+    name="github"
+    url="https://github.com/hanipcode"
+  [[params.social]]
+    name="email"
+    url="mailto:hanifeij@yahoo.co.id?subject=I have a project for you"
+
+  [[menu.main]]
+    identifier = "blog"
+    name       = "Blog"
+    url        = "/posts"
