@@ -46,4 +46,4 @@ yah begitulah, untuk tulisan kali ini segitu saja, mari berjumpa di tulisan sela
 
 ### Contributor Credit
 Thank you for editing and contributing to this page:<br/>
-- [@azamuddin](https://github.com/azamuddin) for the typo and fixes in this [PR](https://github.com/hanipcode/blog/pull/1)  
+- [@azamuddin](https://github.com/azamuddin) for the typo and fixes in this [PR](https://github.com/hanipcode/blog/pull/1)

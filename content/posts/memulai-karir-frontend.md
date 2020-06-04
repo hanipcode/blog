@@ -166,7 +166,7 @@ https://www.w3schools.com/  adalah website  interaktif dimana kamu bisa belajar
 Buku Javascript Gratis https://eloquentjavascript.net/ sangat recommended untuk diibaca untuk belajar JS
 
 ### YDKJS (You Dont Know Javascript)
-Buku Javascript yang gratis kalau mau baca di github nya https://github.com/getify/You-Dont-Know-JS
+Buku Javascript yang gratis kalau mau baca di github nya [disini](https://github.com/getify/You-Dont-Know-JS)
 
 ### Group Facebook Javascript Indonesia
-https://www.facebook.com/groups/sencha.indo.admin 
+[Group JS Indonesia](https://www.facebook.com/groups/sencha.indo.admin)
