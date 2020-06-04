@@ -1,7 +1,7 @@
 ---
 title: "Belajar Singleton Design Pattern untuk Frontend"
 date: 2020-06-04T10:13:27+07:00
-draft: true
+draft: false
 toc: false
 images:
 tags:
