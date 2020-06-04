@@ -41,3 +41,8 @@ Tidak perlu lah aku rasa untuk saling membuli. we are all beginner at some point
 ---
 
 yah begitulah, untuk tulisan kali ini segitu saja, mari berjumpa di tulisan selanjutnya
+
+
+### Contributor Credit
+Thank you for editing and contributing to this page: 
+- [@azamuddin](https://github.com/azamuddin) for the typo and fixes in this [PR](https://github.com/hanipcode/blog/pull/1)
