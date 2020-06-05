@@ -12,7 +12,7 @@ tags:
 ## Apa itu CSS Module
 
 sebelum meembahas library classnames  ada baiknya kamu mengetahui dulu tentang css modules. secara gampang nya css modules adalah melakukan import styles menjadi seperti mengimport modules, contoh seperti dibawah
-```javascript
+```jsx
 import styles from './styles.css'
 ```
 
@@ -23,7 +23,7 @@ pertama-tama  mari kita perjelas dulu beberapa hal. pertama, bagaimana css modul
 }
 ```
 maka pada saat **compile time** mejadi file hasil generate css dari bundler semacam webpack, webpack akan menambahkan hash pada keelas css tersebut. misal menjadi `.expanded_131321`. maka dari itu, saat kamu mengimport styles tersebut sebagai modules, kamu tidak bisa lagi meenggunakan class tersebut dengan cara begini
-```javascript
+```jsx
 import styles from 'styles.scss';
 function  App() {
   return (
@@ -33,7 +33,7 @@ function  App() {
 }
 ```
 cara demikian tidak akan bekerja, mengapa ? karena pada saat **compile time** nama kelas tersebeut sudah diberi hash dan dirubah oleh webpack. lalu  dimana hasil compile time terseebt disimpan ? hasl tersebut disimpan di style yang kita import sebagai module atau dalam kasus diatas di object `styles`. jadi kita dapat menggunakan class tersebut deengan cara seperti dibawah
-```javascript
+```jsx
 import styles from 'styles.scss';
 
 function App() {
@@ -47,7 +47,7 @@ semua ini baik baik saja, ketika setiap komponen kita hanya  memiliki satu class
 
 ## Bisa kah css module di combine dengan css framework ?
 Mungkin kamu bertanya  tanya tentang hal ini. bisa gak sih  css module ini digabng  dengan css framework biasa. tentu bisa. bundler (webpack) hanya melakukan hashing pada file style yang kita import, tidak ke semua style. maka contohlah kamu menggunakan suatu framework grid, kamu dapat melakukan demikian
-```javascript
+```jsx
 import styles from 'styles.scss';
 
 function App() {
@@ -61,7 +61,7 @@ syntax diatas akan bekereja sesuai semestinya, karena global style tidak akan di
 
 ## Apa itu classnames
 Library classnames adalah library yang mempermudah kita untuk melakukan perubahan style secara conditional. misalkan cara yang lazim kita lakukan demikian:
-```javascript
+```jsx
 // another import 
 // ..
 import styles from './styles.css'
@@ -80,7 +80,7 @@ bukankah itu terlihat sangat kompleks hanya untuk memanage perubahan style yang 
 
 ## Penggunaan classnames library
 Classnames library memungkinkan kita untuk melakukan demikian
-```javascript
+```jsx
 import styles from 'styles.css';
 import cx from 'classnames';
 
@@ -103,7 +103,7 @@ Terlihat lebih rapih bukan ? apalagi ketika perubahan styles tersebut bergantung
 ## Lebih jauh dengan classnames.bind
 
 Nah classnames ini punya fitur tambahan lagi yang mampu membuat code kita lebih rapih. yaitu `.bind`. kegunaan.bind ini adalah untuk melakukan pengikatan antara module classnames ini dengan css yang kita import. sehingga dari awalnya kamu melakukan
-```javascript
+```jsx
     <div className={cx({
       globalclassname: true,
       [`${styles.container}`]: true,
@@ -113,7 +113,7 @@ Nah classnames ini punya fitur tambahan lagi yang mampu membuat code kita lebih 
     </div>
 ```
 jamu dapat melakukan
-```javascript
+```jsx
     <div className={cx({
       globalclassname: true,
       container: true,
@@ -124,7 +124,7 @@ jamu dapat melakukan
 ```
 seperti dilihat diatas, kita tidak perlu lagi mengakses module styles yang kita import itu  sendiri, seolah kita menggunakan global style. cara melakukan pengikatan tersebut adalah seperti dibawah
 
-```javascript
+```jsx
 import styles from 'styles.scss';
 import classnames from 'classnames';
 
