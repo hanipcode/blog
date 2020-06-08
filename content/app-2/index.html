@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000" />
   <meta name="description" content="Web site created using create-react-app" />
   <link rel="apple-touch-icon" href="/logo192.png" />
-  <link rel="manifest" href="/manifest.json" />
+  <!-- <link rel="manifest" href="/manifest.json" /> -->
   <title>App 2 Sample</title>
   <!-- <link href="/static/css/main.5f361e03.chunk.css" rel="stylesheet"> -->
 </head>
@@ -34,7 +34,10 @@
     } else if (fileType === "js") {
       tag = document.createElement("script");
       tag.setAttribute("src", filename);
-    };
+    } else if (fileType === "json") {
+      tag = document.createElement("link");
+      tag.setAttribute("rel", "manifest");
+    }
     return tag;
   };
 

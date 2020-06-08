@@ -1,5 +1,6 @@
 {
   "app-1": [
+    "/app-1/static/manifest.json",
     "/app-1/static/js/2.8f79e5e6.chunk.js",
     "/app-1/static/js/main.72e239eb.chunk.js",
     "/app-1/static/css/main.5f361e03.chunk.css"
