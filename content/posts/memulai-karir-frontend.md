@@ -4,6 +4,7 @@ date: 2020-06-04T14:18:37+07:00
 draft: false
 toc: true
 images:
+cover: "img/3.jpg"
 tags:
   - frontend
   - javascript
