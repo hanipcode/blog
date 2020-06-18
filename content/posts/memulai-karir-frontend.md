@@ -12,7 +12,6 @@ tags:
 ---
 
 **Note**: *Saya mencoba membuat halaman Trakteer untuk donasi support terhadap blog/tulisan saya, (support hampir semua dompet digital) https://trakteer.id/hanipcode . Yuk Support jika kamu menikmati  tulisan ini*
----
 
 Di tulisan kali ini saya akan mencoba menuliskan tentang  bagaimana memulai karir di frontend secara otodidak dan bahkan hampir tanpa biaya. apakah cara ini paling benar ? tentu saja tidak. ada sebagian orang yang dapat nilai plus dari bootcamp karena unsur sosial nya, dimana bisa belajar bersama. tapi ada juga yang justru lebih efektif ketika belajar sendiri. nah guide ini untuk orang orang dengan tipe kedua tersebut.
 
