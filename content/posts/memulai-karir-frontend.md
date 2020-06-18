@@ -10,6 +10,9 @@ tags:
   - html
 ---
 
+**Note**: *Saya mencoba membuat halaman Trakteer untuk donasi support terhadap blog/tulisan saya, (support hampir semua dompet digital) https://trakteer.id/hanipcode . Yuk Support jika kamu menikmati  tulisan ini*
+---
+
 Di tulisan kali ini saya akan mencoba menuliskan tentang  bagaimana memulai karir di frontend secara otodidak dan bahkan hampir tanpa biaya. apakah cara ini paling benar ? tentu saja tidak. ada sebagian orang yang dapat nilai plus dari bootcamp karena unsur sosial nya, dimana bisa belajar bersama. tapi ada juga yang justru lebih efektif ketika belajar sendiri. nah guide ini untuk orang orang dengan tipe kedua tersebut.
 
 pada dasarnya timeline perjalanan untuk memula karir frontend menurut saya  baiknya  begini.
@@ -170,3 +173,8 @@ Buku Javascript yang gratis kalau mau baca di github nya [disini](https://github
 
 ### Group Facebook Javascript Indonesia
 [Group JS Indonesia](https://www.facebook.com/groups/sencha.indo.admin)
+
+
+
+---
+**Note**: *Untuk memaintain blog ini, saya menghabiskan waktu, jika kamu merasa tulisan ini bermanfaat dan ingin melakukan donasi agar saya tetapbisa terus menulis, kamu bisa mengunjungi  page Trakteer saya dan berdonasi (support hampir semua dompet digital) https://trakteer.id/hanipcode . Yuk Support jika kamu menikmati  tulisan ini*
