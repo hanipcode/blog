@@ -92,5 +92,25 @@
                 {{ template "_internal/disqus.html" . }}
             </div>
         {{- end }}
+
+        <script async src="https://unpkg.com/mermaid@8.2.3/dist/mermaid.min.js"></script>
+        <style>
+            .node rect {
+                fill: #212121 !important;
+            }
+            .node .label {
+                color: #CACACA !important;
+            }
+            .edgePath .path {
+                stroke: #a9a9b3 !important;
+            }
+            .arrowheadPath {
+                fill: #a9a9b3 !important;
+
+            }
+            .mermaid {
+                text-align: center !important;
+            }
+        </style>
     </main>
 {{ end }}

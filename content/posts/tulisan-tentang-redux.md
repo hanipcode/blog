@@ -11,3 +11,8 @@ tags:
 
 ## Pengantar
 Sebelum lebih jauh membahas tentang redux, saya berekspektasi kamu sudah memahami 
+{{<mermaid>}}
+graph TD;
+A-->B
+B-->C
+{{</mermaid>}}
