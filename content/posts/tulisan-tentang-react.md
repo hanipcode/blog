@@ -1,5 +1,5 @@
 ---
-title: "Sebuah Pengantar Tentang Struktur Aplikas React"
+title: "Sebuah Pengantar Tentang Struktur Aplikasi React"
 date: 2020-06-19T05:10:44.606Z
 draft: false
 toc: false
