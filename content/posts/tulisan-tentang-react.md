@@ -9,7 +9,7 @@ tags:
   - untagged
 ---
 
-**Note**: Saat ini saya memiliki  page trakteer. bagi teman teman yang ingin meensupport saya agar saya tidak perlu menambahkan iklan di blog ini untuk tetap dapat menulis, teman teman bisa berdonasi di: https://trakteer.id/hanipcode (support hampir semua e-wallet)
+
 
 Pada tulisan kali ini, kita akan membahas hal hal yang  terkait react seperti one way data binding, flux architecture, dll.
 
@@ -140,5 +140,3 @@ Lalu kenapa React disebut frameework yang declarative ? Karena react ya menyembu
 
 Apakah teman teman tertarik untuk membahasnya ?
 
----
-**Note**: Saat ini saya memiliki  page trakteer. bagi teman teman yang ingin meensupport saya agar saya tidak perlu menambahkan iklan di blog ini untuk tetap dapat menulis, teman teman bisa berdonasi di: https://trakteer.id/hanipcode (support hampir semua e-wallet)
