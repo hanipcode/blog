@@ -9,7 +9,9 @@ tags:
 ---
 
 *Question Of The Day*: Apa Fase Pertama Dalam Belajar ?
+
 ---
+
 Untuk waktu yang sangat lama saya percaya bahwa fase pertama dalam belajar adalah `membaca`. tapi belakangan ini, saya mulai memikirkan kembali tentang hal ini.
 Akhir akhir ini saya merasa sangat malas untuk membaca, dan memiliki love/hate relationship dengan buku. antara merasa guilty karena merasa tidak ada perkembangan dalam diri.
 namun juga merasa cepat jenuh dan bosan ketika membaca. rasanya energi tiba tiba habis ketika saya mulai membaca.
