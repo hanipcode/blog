@@ -16,23 +16,6 @@ tags:
 sebelum ini website saya di host dengan stack vps digital ocean dan blogging platform Ghost.
 Kali ini saya menggunakan stack yang agak berbeda karena saya memilih jalur static site.
 
-{{<rawhtml>}}
-
-<iframe src="https://designfiles.co/embeds/boards/154796" id="df-embed-iframe"  width="100%"  style="border:none;margin: 0 auto; self-align: center; text-align: center; width: 100%; height: fit-content; display: block; max-width: 100%">
-</iframe>
-<script>
-function resizeHeight() {
-  const el = document.getElementById("df-embed-iframe");
-  const curWidth = el.clientWidth;
-  const toRatio = (3/4) * curWidth;
-  const PROJECT_NAME_HEIGHT = 50;
-  document.getElementById("df-embed-iframe").style.height = `${toRatio + PROJECT_NAME_HEIGHT}px`;
-}
-resizeHeight();
-window.addEventListener('resize', resizeHeight);
-</script>
-{{</rawhtml>}}
-
 ## Mengapa pindah ?
 
 ada beberapa alasan sih. alasan sok keren nya > _belajar stack baru_. padahal sih...
