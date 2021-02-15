@@ -17,24 +17,8 @@ Proin viverra, erat eget porta pretium, sapien magna faucibus libero, at lacinia
 
 {{<rawhtml>}}
 
-<iframe src="http://localhost:3001/embeds/boards/1?shoppables=1" id="df-embed-iframe" class="df-embed-iframe df-embed-iframe--shoppables"  width="100%"  style="border:none;margin: 0 auto; self-align: center; text-align: center; width: 100%; height: fit-content; display: block; max-width: 100%">
-</iframe>
-<script>
-function resizeHeight() {
-  const el = document.getElementById("df-embed-iframe");
-  const isWithShoppables = document.getElementsByClassName("df-embed-iframe--shoppables").length > 0;
-  const curWidth = el.clientWidth;
-  const toRatio = (3/4) * curWidth;
-  let PROJECT_NAME_HEIGHT = 50;
-  if (isWithShoppables) {
-    PROJECT_NAME_HEIGHT += 600;
-  }
-  console.log(curWidth, toRatio);
-  document.getElementById("df-embed-iframe").style.height = `${toRatio + PROJECT_NAME_HEIGHT}px`;
-}
-resizeHeight();
-window.addEventListener('resize', resizeHeight);
-</script>
+<iframe src="http://s.designfiles.co/widgets/1" width="1000" height="454" style="border:none;"></iframe>
+    <script src="http://s.designfiles.co/externals/widget.js">
 {{</rawhtml>}}
 
 ## Subheading 2
