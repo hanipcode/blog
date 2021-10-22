@@ -17,8 +17,9 @@ Proin viverra, erat eget porta pretium, sapien magna faucibus libero, at lacinia
 
 {{<rawhtml>}}
 
-<iframe src="https://s.designfiles.co/widgets/1" id="df-widget-iframe" width="1000" height="454" style="border:none;"></iframe>
-    <script src="https://s.designfiles.co/externals/widget.js"></script>
+<iframe src="https://designfiles.co/embeds/boards/3760f280-f917-4e06-98fe-ed38ce074d2b?shoppables=1" class="df-embed-board-iframe" style="border:none;margin: 0 auto;width:100%;display:block;"></iframe>
+<script>(() => {const e=document.createElement('script'); e.src=`https://designfiles.co/assets/embed-board.js?r=${Date.now()}`; document.body.appendChild(e);})()</script>
+
 {{</rawhtml>}}
 
 ## Subheading 2

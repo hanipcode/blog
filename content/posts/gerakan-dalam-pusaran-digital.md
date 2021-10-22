@@ -1,7 +1,7 @@
 ---
 title: "Gerakan Sosial Dalam Pusaran Digital: Sebuah opini"
 date: 2020-12-27T21:43:04+07:00
-draft: false
+draft: true
 toc: false
 images:
 tags:

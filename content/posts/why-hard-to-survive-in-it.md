@@ -1,7 +1,7 @@
 ---
 title: "Kenapa susah untuk stay relevant di IT"
 date: 2020-06-02T21:13:56+07:00
-draft: false
+draft: true
 toc: false
 images:
 tags:
