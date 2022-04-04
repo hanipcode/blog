@@ -1,6 +1,6 @@
 ---
 title: "Belajar Singleton Design Pattern untuk Frontend"
-date: Tue Apr 05 2022 06:37:46 GMT+0700 (Western Indonesia Time)
+date: 2022-04-04T23:40:01+07:00
 draft: false
 toc: false
 images:
