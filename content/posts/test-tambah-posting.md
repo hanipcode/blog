@@ -1,5 +1,5 @@
 ---
-title: "Belajar Singleton Design Pattern untuk Frontend"
+title: "Using Refined Github Chrome Extension So I can Blog for github"
 date: 2022-04-04T23:40:01+07:00
 draft: false
 toc: false
@@ -8,4 +8,6 @@ cover: "img/2.jpg"
 tags:
   - untagged
 ---
-tes tambah posting langsung dari github
+
+I found this [cool extension](https://chrome.google.com/webstore/detail/refined-github/hlepfoohegkhhmjieoechaddaejaokhf)
+So I can now do blogging from github directly :D
