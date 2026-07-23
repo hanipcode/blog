@@ -1,0 +1,42 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import PostLayout from '../../../layouts/PostLayout.astro';
+import { getPostSlug, isVisiblePost, postUrl } from '@lib/i18n';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('posts')).filter(isVisiblePost);
+
+  return posts.map((post) => {
+    const translation = posts.find((candidate) =>
+      candidate.data.translationKey === post.data.translationKey &&
+      candidate.data.locale !== post.data.locale
+    );
+
+    return {
+      params: { lang: post.data.locale, slug: getPostSlug(post) },
+      props: { post, alternateUrl: translation ? postUrl(translation) : undefined },
+    };
+  });
+}
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+  alternateUrl?: string;
+}
+
+const { post, alternateUrl } = Astro.props;
+const { Content } = await render(post);
+---
+
+<PostLayout
+  title={post.data.title}
+  description={post.data.description}
+  publishedAt={post.data.publishedAt}
+  locale={post.data.locale}
+  tags={post.data.tags}
+  canonicalUrl={post.data.canonicalUrl}
+  ogImage={`/${post.data.locale}/blog/og/${getPostSlug(post)}.png`}
+  {alternateUrl}
+>
+  <Content />
+</PostLayout>

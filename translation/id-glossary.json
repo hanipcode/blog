@@ -1,0 +1,20 @@
+{
+  "preferred": {
+    "build": "build",
+    "code": "code",
+    "component": "component",
+    "deployment": "deployment",
+    "framework": "framework",
+    "runtime": "runtime",
+    "type safety": "type safety"
+  },
+  "neverTranslate": [
+    "Astro",
+    "Codex",
+    "MDX",
+    "Mermaid",
+    "Shiki",
+    "TypeScript",
+    "YouTube"
+  ]
+}

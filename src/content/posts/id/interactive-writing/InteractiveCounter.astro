@@ -1,0 +1,21 @@
+<post-counter class="demo-counter">
+  <span>Klik: <strong data-count>0</strong></span>
+  <button type="button" data-increment>Coba component khusus tulisan ini</button>
+</post-counter>
+
+<script>
+  class PostCounter extends HTMLElement {
+    connectedCallback() {
+      const output = this.querySelector<HTMLElement>('[data-count]');
+      const button = this.querySelector<HTMLButtonElement>('[data-increment]');
+      let count = 0;
+
+      button?.addEventListener('click', () => {
+        count += 1;
+        if (output) output.textContent = String(count);
+      });
+    }
+  }
+
+  if (!customElements.get('post-counter')) customElements.define('post-counter', PostCounter);
+</script>

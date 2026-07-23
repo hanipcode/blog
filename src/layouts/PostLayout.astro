@@ -1,0 +1,69 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { formatDate, type Locale } from '@lib/i18n';
+
+interface Props {
+  title: string;
+  description: string;
+  publishedAt: Date;
+  locale: Locale;
+  tags: string[];
+  alternateUrl?: string;
+  canonicalUrl?: string;
+  ogImage: string;
+}
+
+const { title, description, publishedAt, locale, tags, alternateUrl, canonicalUrl, ogImage } = Astro.props;
+---
+
+<BaseLayout
+  title={`${title} | Muhammad Hanif`}
+  {description}
+  {locale}
+  {alternateUrl}
+  {canonicalUrl}
+  {ogImage}
+  ogType="article"
+  {publishedAt}
+  {tags}
+>
+  <article>
+    <header class="post-header">
+      <p class="eyebrow">{tags.join(' / ')}</p>
+      <h1>{title}</h1>
+      <p class="post-deck">{description}</p>
+      <div class="post-meta">
+        <time datetime={publishedAt.toISOString()}>{formatDate(publishedAt, locale)}</time>
+        {alternateUrl && <a href={alternateUrl}>{locale === 'en' ? 'Baca dalam Bahasa Indonesia' : 'Read in English'}</a>}
+        {canonicalUrl && <a href={canonicalUrl} target="_blank" rel="noreferrer">{locale === 'en' ? 'Original publication' : 'Publikasi asli'}</a>}
+      </div>
+    </header>
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
+
+<script>
+  const diagrams = [...document.querySelectorAll<HTMLElement>('.mermaid')];
+  const sources = diagrams.map((diagram) => diagram.textContent ?? '');
+
+  async function renderMermaid() {
+    if (diagrams.length === 0) return;
+
+    const { default: mermaid } = await import('mermaid');
+    diagrams.forEach((diagram, index) => {
+      diagram.textContent = sources[index];
+      diagram.removeAttribute('data-processed');
+    });
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'strict',
+      theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'neutral',
+    });
+    await mermaid.run({ nodes: diagrams });
+  }
+
+  void renderMermaid();
+  window.addEventListener('themechange', () => void renderMermaid());
+</script>

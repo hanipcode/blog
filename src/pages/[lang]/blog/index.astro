@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { copy, formatDate, isVisiblePost, locales, postUrl, type Locale } from '@lib/i18n';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const locale = Astro.params.lang as Locale;
+const posts = (await getCollection('posts')).filter((post) => post.data.locale === locale && isVisiblePost(post))
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+const alternateUrl = `/${locale === 'en' ? 'id' : 'en'}/blog/`;
+---
+
+<BaseLayout title={`${copy[locale].blog} | Muhammad Hanif`} description={copy[locale].description} {locale} {alternateUrl}>
+  <header class="post-header archive-header">
+    <p class="eyebrow">Archive</p>
+    <h1>{copy[locale].blog}</h1>
+    <p class="post-deck">{copy[locale].description}</p>
+  </header>
+  {posts.length > 0 ? (
+    <ol class="post-list">
+      {posts.map((post) => (
+        <li>
+          <a href={postUrl(post)}>
+            <div>
+              <h2>{post.data.title}</h2>
+              <p>{post.data.description}</p>
+            </div>
+            <time datetime={post.data.publishedAt.toISOString()}>{formatDate(post.data.publishedAt, locale)}</time>
+          </a>
+        </li>
+      ))}
+    </ol>
+  ) : (
+    <p class="writing-empty">New essays are being drafted. Check back soon.</p>
+  )}
+</BaseLayout>

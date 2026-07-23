@@ -1,0 +1,14 @@
+---
+interface Props {
+  url: string;
+}
+
+const { url } = Astro.props;
+---
+
+<div class="embed tweet">
+  <blockquote class="twitter-tweet" data-dnt="true">
+    <a href={url}>View this post on X</a>
+  </blockquote>
+</div>
+<script is:inline async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>

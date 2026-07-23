@@ -1,0 +1,288 @@
+---
+import { getCollection } from 'astro:content';
+import { copy, formatDate, isVisiblePost, locales, postUrl, type Locale } from '@lib/i18n';
+import { identity, profileByLocale } from '../../data/profile';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const locale = Astro.params.lang as Locale;
+const profile = profileByLocale[locale];
+const visiblePosts = (await getCollection('posts'))
+  .filter((post) => post.data.locale === locale && isVisiblePost(post))
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+const featuredPostKeys = [
+  'interactive-writing',
+  'not-every-self-learning-journey-is',
+  'rough-edges-of-current-state-of-ai',
+];
+const featuredPosts = featuredPostKeys.flatMap((key) => {
+  const post = visiblePosts.find((entry) => entry.data.translationKey === key);
+  return post ? [post] : [];
+});
+const posts = [...featuredPosts, ...visiblePosts.filter((post) => !featuredPosts.includes(post))].slice(0, 3);
+const [leadPost, ...secondaryPosts] = posts;
+const alternateUrl = `/${locale === 'en' ? 'id' : 'en'}/`;
+const contactSubject = locale === 'en' ? 'Engineering conversation' : 'Diskusi engineering';
+const contactBody = locale === 'en'
+  ? 'Hi Hanif,\n\nHere is the problem I would like to discuss:\n'
+  : 'Halo Hanif,\n\nBerikut masalah yang ingin saya diskusikan:\n';
+const contactUrl = `mailto:${identity.email}?subject=${encodeURIComponent(contactSubject)}&body=${encodeURIComponent(contactBody)}`;
+---
+
+<BaseLayout title={profile.metaTitle} description={profile.metaDescription} {locale} {alternateUrl}>
+  <section class="profile-hero" id="profile">
+    <div class="profile-intro">
+      <p class="eyebrow">{identity.name} / {profile.hero.eyebrow}</p>
+      <h1>{profile.hero.headline}</h1>
+      <p class="profile-summary">{profile.hero.introduction}</p>
+      <div class="hero-actions">
+        <a class="button-link button-primary" href="#work">{profile.hero.primaryCta}<span aria-hidden="true">&darr;</span></a>
+        <a class="button-link button-secondary" href="#contact">{profile.hero.secondaryCta}</a>
+      </div>
+      <div class="profile-meta">
+        <p><span class="status-dot" aria-hidden="true"></span>{profile.hero.availability}</p>
+        <nav class="profile-links" aria-label={profile.hero.socialLabel}>
+          <a href={identity.github} target="_blank" rel="noreferrer">GitHub<span class="sr-only"> ({copy[locale].newTab})</span></a>
+          <a href={identity.linkedin} target="_blank" rel="noreferrer">LinkedIn<span class="sr-only"> ({copy[locale].newTab})</span></a>
+        </nav>
+      </div>
+    </div>
+
+    <figure class="working-range">
+      <figcaption>
+        <span>{profile.hero.mapLabel}</span>
+        <span>{profile.hero.mapHint}</span>
+      </figcaption>
+      <ol>
+        {profile.workingRange.items.map((capability, index) => (
+          <li>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <div>
+              <h2>{capability.title}</h2>
+              <p>{capability.tools}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </figure>
+
+    <dl class="profile-metrics" aria-label={profile.metricsLabel}>
+      {profile.metrics.map((metric) => (
+        <div>
+          <dt>{metric.value}</dt>
+          <dd>{metric.label}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  <section class="profile-section work-section" id="work">
+    <header class="section-heading">
+      <div>
+        <p class="eyebrow">{profile.work.eyebrow}</p>
+        <h2>{profile.work.title}</h2>
+      </div>
+      <p>{profile.work.introduction}</p>
+    </header>
+
+    <div class="case-study-list">
+      {profile.caseStudies.map((study, index) => (
+        <article
+          class:list={['case-study', index === 1 && 'case-study-feature']}
+          data-header-surface={index === 1 ? 'feature' : undefined}
+        >
+          <header class="case-study-header">
+            <span class="case-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+            <div>
+              <p>{study.company}</p>
+              <span>{study.role}</span>
+            </div>
+            <p class="case-outcome"><span>{profile.work.outcome}</span>{study.outcome}</p>
+          </header>
+
+          <div class="case-study-intro">
+            <h3>{study.title}</h3>
+            <p>{study.summary}</p>
+          </div>
+
+          <figure class="system-flow">
+            <figcaption>{profile.work.systemPath}</figcaption>
+            <ol>
+              {study.diagram.map((label, nodeIndex) => (
+                <li>
+                  <span>{String(nodeIndex + 1).padStart(2, '0')}</span>
+                  <p>{label}</p>
+                </li>
+              ))}
+            </ol>
+          </figure>
+
+          <dl class="case-details">
+            <div>
+              <dt>{profile.work.problem}</dt>
+              <dd>{study.problem}</dd>
+            </div>
+            <div>
+              <dt>{profile.work.response}</dt>
+              <dd>{study.response}</dd>
+            </div>
+            <div>
+              <dt>{profile.work.result}</dt>
+              <dd>{study.result}</dd>
+            </div>
+          </dl>
+
+          <ul class="tag-list" aria-label={profile.work.tagsLabel}>
+            {study.tags.map((tag) => <li>{tag}</li>)}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="profile-section consulting-section" id="consulting" data-header-surface="consulting">
+    <header class="consulting-heading">
+      <p class="eyebrow">{profile.consulting.eyebrow}</p>
+      <h2>{profile.consulting.title}</h2>
+      <p class="consulting-introduction">{profile.consulting.introduction}</p>
+    </header>
+    <div class="consulting-engagements">
+      {profile.consulting.items.map((engagement) => (
+        <article class="consulting-engagement">
+          <div class="consulting-meta">
+            <p>{engagement.company}</p>
+            <span>{engagement.role}</span>
+            <span>{engagement.period}</span>
+          </div>
+          <div class="consulting-story">
+            <h3>{engagement.title}</h3>
+            <p class="consulting-engagement-introduction">{engagement.introduction}</p>
+            {engagement.metrics.length > 0 && (
+              <dl class="consulting-metrics">
+                {engagement.metrics.map((metric) => (
+                  <div>
+                    <dt>{metric.value}</dt>
+                    <dd>{metric.label}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+            <p class="consulting-description">{engagement.description}</p>
+            <ul class="consulting-tags">
+              {engagement.tags.map((tag) => <li>{tag}</li>)}
+            </ul>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="profile-section career-section" id="career">
+    <header class="section-heading">
+      <div>
+        <p class="eyebrow">{profile.career.eyebrow}</p>
+        <h2>{profile.career.title}</h2>
+      </div>
+      <p>{profile.career.introduction}</p>
+    </header>
+    <ol class="career-list">
+      {profile.career.items.map((item) => (
+        <li>
+          <div class="career-company">
+            <h3>{item.company}</h3>
+            <p>{item.role}</p>
+          </div>
+          <p class="career-description">{item.description}</p>
+          <span class="career-period">{item.period}</span>
+        </li>
+      ))}
+    </ol>
+    <div class="earlier-career">
+      <p>{profile.career.earlierLabel}</p>
+      <p>{profile.career.earlier}</p>
+    </div>
+  </section>
+
+  <section class="profile-section writing-section" id="writing">
+    <header class="section-heading writing-heading">
+      <div>
+        <p class="eyebrow">{profile.writing.eyebrow}</p>
+        <h2>{profile.writing.title}</h2>
+        <p>{profile.writing.introduction}</p>
+      </div>
+      <a class="text-link" href={`/${locale}/blog/`}>{profile.writing.viewAll}</a>
+    </header>
+
+    {leadPost ? (
+      <div class="writing-layout">
+        <article class="featured-post">
+          <a href={postUrl(leadPost)}>
+            <time datetime={leadPost.data.publishedAt.toISOString()}>{formatDate(leadPost.data.publishedAt, locale)}</time>
+            <h3>{leadPost.data.title}</h3>
+            <p>{leadPost.data.description}</p>
+            <span>{copy[locale].read}<span aria-hidden="true"> &nearr;</span></span>
+          </a>
+        </article>
+        <ol class="post-list compact-post-list">
+          {secondaryPosts.map((post) => (
+            <li>
+              <a href={postUrl(post)}>
+                <div>
+                  <h3>{post.data.title}</h3>
+                  <p>{post.data.description}</p>
+                </div>
+                <time datetime={post.data.publishedAt.toISOString()}>{formatDate(post.data.publishedAt, locale)}</time>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+    ) : (
+      <p class="writing-empty">{profile.writing.empty}</p>
+    )}
+  </section>
+
+  <section class="contact-panel" id="contact">
+    <p class="eyebrow">{profile.contact.eyebrow}</p>
+    <div>
+      <h2>{profile.contact.title}</h2>
+      <div class="contact-copy">
+        <p>{profile.contact.description}</p>
+        <a class="button-link contact-action" href={contactUrl}>{profile.contact.action}</a>
+        <button
+          class="copy-email"
+          type="button"
+          data-email={identity.email}
+          data-label={profile.contact.copyEmail}
+          data-copied={profile.contact.copied}
+          hidden
+        >{profile.contact.copyEmail}</button>
+        <p class="contact-email"><span>{profile.contact.emailLabel}</span><a href={`mailto:${identity.email}`}>{identity.email}</a></p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const copyButton = document.querySelector<HTMLButtonElement>('.copy-email');
+
+  if (copyButton && navigator.clipboard) {
+    copyButton.hidden = false;
+    copyButton.addEventListener('click', async () => {
+      const email = copyButton.dataset.email;
+      if (!email) return;
+      try {
+        await navigator.clipboard.writeText(email);
+      } catch {
+        return;
+      }
+      copyButton.textContent = copyButton.dataset.copied ?? copyButton.textContent;
+      window.setTimeout(() => {
+        copyButton.textContent = copyButton.dataset.label ?? copyButton.textContent;
+      }, 1800);
+    });
+  }
+</script>

@@ -1,0 +1,165 @@
+---
+import ThemeToggle from '@components/ThemeToggle.astro';
+import { copy, type Locale } from '@lib/i18n';
+import '@fontsource-variable/newsreader';
+import '@fontsource/dm-mono';
+import '@fontsource/dm-mono/500.css';
+import { identity } from '../data/profile';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  locale: Locale;
+  alternateUrl?: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  publishedAt?: Date;
+  tags?: readonly string[];
+}
+
+const {
+  title,
+  description,
+  locale,
+  alternateUrl,
+  canonicalUrl,
+  ogImage = `/og/${locale}.png`,
+  ogType = 'website',
+  publishedAt,
+  tags = [],
+} = Astro.props;
+const alternateLocale = locale === 'en' ? 'id' : 'en';
+const siteUrl = Astro.site ?? Astro.url;
+const pageUrl = new URL(Astro.url.pathname, siteUrl).toString();
+const canonicalHref = canonicalUrl ?? pageUrl;
+const imageUrl = new URL(ogImage, siteUrl).toString();
+const alternateHref = alternateUrl ? new URL(alternateUrl, siteUrl).toString() : undefined;
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="author" content={identity.name} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#f4f0e8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#181a18" media="(prefers-color-scheme: dark)" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={identity.name} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content={locale === 'en' ? 'en_US' : 'id_ID'} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:secure_url" content={imageUrl} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
+    {ogType === 'article' && publishedAt && <meta property="article:published_time" content={publishedAt.toISOString()} />}
+    {ogType === 'article' && tags.map((tag) => <meta property="article:tag" content={tag} />)}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={title} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={canonicalHref} />
+    {alternateHref && <link rel="alternate" hreflang={alternateLocale} href={alternateHref} />}
+    <title>{title}</title>
+    <script is:inline>
+      const savedTheme = localStorage.getItem('theme');
+      const preferredTheme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = savedTheme || preferredTheme;
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">{copy[locale].skip}</a>
+    <header class="site-header" data-surface="default" data-scrolled="false">
+      <div class="site-header-inner shell">
+        <a class="site-mark" href={`/${locale}/`} aria-label={`${identity.name}, ${copy[locale].home}`}>
+          <span class="site-mark-full">{identity.name}</span>
+          <span class="site-mark-short" aria-hidden="true">M. Hanif</span>
+        </a>
+        <nav class="site-nav" aria-label={copy[locale].primaryNavigation}>
+          <div class="nav-links">
+            <a href={`/${locale}/#work`}>{copy[locale].work}</a>
+            <a href={`/${locale}/#consulting`}>{copy[locale].consulting}</a>
+            <a href={`/${locale}/#career`}>{copy[locale].experience}</a>
+            <a href={`/${locale}/blog/`}>{copy[locale].blog}</a>
+          </div>
+          <details class="nav-menu">
+            <summary>{copy[locale].menu}</summary>
+            <div class="nav-menu-panel">
+              <a href={`/${locale}/#work`}>{copy[locale].work}</a>
+              <a href={`/${locale}/#consulting`}>{copy[locale].consulting}</a>
+              <a href={`/${locale}/#career`}>{copy[locale].experience}</a>
+              <a href={`/${locale}/blog/`}>{copy[locale].blog}</a>
+              <a href={`/${locale}/#contact`}>{copy[locale].contact}</a>
+            </div>
+          </details>
+          <div class="language-switcher" role="group" aria-label={copy[locale].language}>
+            {locale === 'en' ? (
+              <span aria-current="true">EN</span>
+            ) : (
+              <a href={alternateUrl} hreflang="en">EN</a>
+            )}
+            {locale === 'id' ? (
+              <span aria-current="true">ID</span>
+            ) : (
+              <a href={alternateUrl} hreflang="id">ID</a>
+            )}
+          </div>
+          <ThemeToggle
+            label={copy[locale].theme}
+            lightLabel={copy[locale].switchToLight}
+            darkLabel={copy[locale].switchToDark}
+          />
+          <a class="nav-contact" href={`/${locale}/#contact`}>{copy[locale].contact}</a>
+        </nav>
+      </div>
+    </header>
+    <main class="shell" id="main-content">
+      <slot />
+    </main>
+    <footer class="site-footer shell">
+      <span>{identity.name} / {identity.location}</span>
+      <span>{copy[locale].footer}</span>
+    </footer>
+    <script>
+      document.querySelectorAll<HTMLAnchorElement>('.nav-menu-panel a').forEach((link) => {
+        link.addEventListener('click', () => link.closest('details')?.removeAttribute('open'));
+      });
+
+      const header = document.querySelector<HTMLElement>('.site-header');
+      const headerSurfaces = [...document.querySelectorAll<HTMLElement>('[data-header-surface]')];
+      let headerFrame = 0;
+
+      const syncHeaderSurface = () => {
+        if (!header) return;
+        const bounds = header.getBoundingClientRect();
+        const activationY = bounds.bottom + 16;
+        const activeSurface = headerSurfaces.find((section) => {
+          const sectionBounds = section.getBoundingClientRect();
+          return sectionBounds.top <= activationY && sectionBounds.bottom > bounds.bottom;
+        });
+        const surface = activeSurface?.dataset.headerSurface ?? 'default';
+        header.dataset.surface = surface;
+        header.dataset.scrolled = String(window.scrollY > 8);
+      };
+
+      const scheduleHeaderSync = () => {
+        cancelAnimationFrame(headerFrame);
+        headerFrame = requestAnimationFrame(syncHeaderSurface);
+      };
+
+      syncHeaderSurface();
+      window.addEventListener('scroll', scheduleHeaderSync, { passive: true });
+      window.addEventListener('resize', scheduleHeaderSync);
+    </script>
+  </body>
+</html>

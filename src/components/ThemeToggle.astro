@@ -1,0 +1,53 @@
+---
+interface Props {
+  label: string;
+  lightLabel: string;
+  darkLabel: string;
+}
+
+const { label, lightLabel, darkLabel } = Astro.props;
+---
+
+<button
+  class="theme-toggle"
+  type="button"
+  aria-label={label}
+  title={label}
+  aria-pressed="false"
+  data-light-label={lightLabel}
+  data-dark-label={darkLabel}
+>
+  <svg class="theme-icon theme-sun" aria-hidden="true" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="3.25"></circle>
+    <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4"></path>
+  </svg>
+  <svg class="theme-icon theme-moon" aria-hidden="true" viewBox="0 0 24 24">
+    <path d="M20 15.2A8.4 8.4 0 0 1 8.8 4a8.4 8.4 0 1 0 11.2 11.2Z"></path>
+  </svg>
+</button>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('.theme-toggle');
+
+  const syncButton = () => {
+    if (!button) return;
+    const isDark = document.documentElement.dataset.theme === 'dark';
+    const nextLabel = isDark ? button.dataset.lightLabel : button.dataset.darkLabel;
+    button.setAttribute('aria-pressed', String(isDark));
+    if (nextLabel) {
+      button.setAttribute('aria-label', nextLabel);
+      button.setAttribute('title', nextLabel);
+    }
+  };
+
+  syncButton();
+
+  button?.addEventListener('click', () => {
+    const root = document.documentElement;
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    localStorage.setItem('theme', next);
+    syncButton();
+    window.dispatchEvent(new CustomEvent('themechange', { detail: next }));
+  });
+</script>
