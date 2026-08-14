@@ -1,0 +1,258 @@
+.complex-demo {
+  width: min(78rem, calc(100vw - 3rem));
+  margin-block: 2.5rem;
+  margin-inline: 50%;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  font-family: var(--font-ui);
+  transform: translateX(-50%);
+}
+
+.complex-demo__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.complex-demo__toolbar > div {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.complex-demo__toolbar strong {
+  font-size: 0.82rem;
+}
+
+.complex-demo__toolbar span,
+.complex-demo__note {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.complex-demo button {
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--accent);
+  padding: 0.35rem 0.6rem;
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.complex-demo__selection {
+  padding: 0.45rem 1rem;
+  background: var(--paper);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+}
+
+.complex-demo__table {
+  background: var(--paper);
+}
+
+.complex-demo__scroller {
+  position: relative;
+  overflow: auto;
+  height: 24rem;
+  overscroll-behavior: contain;
+}
+
+.complex-demo__spacer {
+  position: relative;
+  min-width: 110rem;
+  background: #16834b;
+}
+
+.complex-demo__header,
+.complex-demo__row {
+  display: grid;
+  grid-template-columns:
+    5rem 11rem 10rem 11rem 8rem 8rem 10rem 6rem 6rem 7rem 11rem 8rem 7rem;
+  min-width: 110rem;
+}
+
+.complex-demo__header {
+  position: sticky;
+  z-index: 5;
+  top: 0;
+  height: 40px;
+  border-block: 1px solid var(--line-strong);
+  background: var(--surface-strong);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.complex-demo__header > span,
+.complex-demo__row > span {
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  align-items: center;
+  min-width: 0;
+  padding: 0.45rem 0.65rem;
+  border-right: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  white-space: nowrap;
+}
+
+.complex-demo__row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.complex-demo__row[data-selected="true"] {
+  background: color-mix(in srgb, var(--accent-soft) 55%, var(--paper));
+}
+
+.complex-demo__row[data-kind="subrow"] {
+  background: color-mix(in srgb, var(--surface) 72%, var(--paper));
+}
+
+.complex-demo__row[data-pulse="0"] {
+  animation: complex-poll-even 550ms ease-out;
+}
+
+.complex-demo__row[data-pulse="1"] {
+  animation: complex-poll-odd 550ms ease-out;
+}
+
+.complex-demo__checkbox-cell,
+.complex-demo__header > span:first-child {
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.complex-demo button.complex-demo__expand {
+  display: inline-grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0;
+  border-radius: 0.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.complex-demo__subrow-marker {
+  color: var(--muted);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+}
+
+.complex-demo input[type="checkbox"] {
+  width: 0.9rem;
+  height: 0.9rem;
+  accent-color: var(--accent);
+}
+
+.complex-demo__copyable {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  width: 100%;
+  gap: 0.35rem;
+}
+
+.complex-demo__truncated {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  text-overflow: ellipsis;
+}
+
+.complex-demo__tooltip {
+  display: none;
+  position: fixed;
+  z-index: 20;
+  margin-top: 1.5rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.25rem;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.35rem 0.5rem;
+  box-shadow: 0 0.4rem 1rem color-mix(in srgb, black 20%, transparent);
+  font-size: 0.65rem;
+}
+
+.complex-demo__truncated:hover .complex-demo__tooltip,
+.complex-demo__truncated:focus-visible .complex-demo__tooltip {
+  display: block;
+}
+
+.complex-demo__copyable button {
+  flex: none;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.62rem;
+}
+
+.complex-demo__chip {
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 0.15rem 0.45rem;
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.complex-demo__chip[data-tone="completed"],
+.complex-demo__chip[data-tone="low"] {
+  border-color: var(--consulting);
+  background: color-mix(in srgb, var(--consulting) 14%, transparent);
+}
+
+.complex-demo__chip[data-tone="pending"],
+.complex-demo__chip[data-tone="medium"],
+.complex-demo__chip[data-tone="review"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.complex-demo__chip[data-tone="failed"],
+.complex-demo__chip[data-tone="high"] {
+  border-color: #a23b32;
+  background: color-mix(in srgb, #a23b32 15%, transparent);
+}
+
+.complex-demo__note {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--line);
+  line-height: 1.45;
+}
+
+@keyframes complex-poll-even {
+  from { background: var(--accent-soft); }
+  to { background: var(--paper); }
+}
+
+@keyframes complex-poll-odd {
+  from { background: var(--accent-soft); }
+  to { background: var(--paper); }
+}
+
+@media (max-width: 42rem) {
+  .complex-demo__toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .complex-demo__row {
+    animation-duration: 1ms;
+  }
+}

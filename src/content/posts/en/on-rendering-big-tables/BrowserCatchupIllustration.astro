@@ -1,0 +1,397 @@
+<figure class="catchup">
+  <div class="catchup__premise">
+    <span><b>Browser compositor</b> moves the viewport immediately</span>
+    <i>while</i>
+    <span><b>JavaScript</b> is still preparing the next rows</span>
+  </div>
+
+  <div class="catchup__legend" aria-hidden="true">
+    <span><i data-swatch="rows"></i>Mounted DOM rows</span>
+    <span><i data-swatch="empty"></i>Empty scroll surface</span>
+    <span><i data-swatch="viewport"></i>Browser viewport</span>
+  </div>
+
+  <div class="catchup__sequence">
+    <section class="catchup__step">
+      <header>
+        <b>1</b>
+        <span><strong>0 ms</strong> Before scrolling</span>
+      </header>
+      <div class="catchup__surface">
+        <div class="catchup__rows catchup__rows--top">
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+          <span>Rendered row window</span>
+        </div>
+        <div class="catchup__viewport catchup__viewport--top">
+          <span>Viewport</span>
+        </div>
+      </div>
+      <p>The mounted rows cover everything the reader can see.</p>
+    </section>
+
+    <div class="catchup__connector" aria-hidden="true">
+      <span>Fast native scroll</span>
+      <i></i>
+    </div>
+
+    <section class="catchup__step catchup__step--blank">
+      <header>
+        <b>2</b>
+        <span><strong>16 ms</strong> Browser moved first</span>
+      </header>
+      <div class="catchup__surface">
+        <div class="catchup__rows catchup__rows--stale">
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+          <span>Old rows are still here</span>
+        </div>
+        <div class="catchup__viewport catchup__viewport--bottom">
+          <span>Blank viewport</span>
+          <small>JavaScript busy</small>
+        </div>
+      </div>
+      <p>The viewport reaches green space before React commits its next range.</p>
+    </section>
+
+    <div class="catchup__connector" aria-hidden="true">
+      <span>React commits</span>
+      <i></i>
+    </div>
+
+    <section class="catchup__step">
+      <header>
+        <b>3</b>
+        <span><strong>Later</strong> JavaScript catches up</span>
+      </header>
+      <div class="catchup__surface">
+        <div class="catchup__rows catchup__rows--bottom">
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+          <span>New row window</span>
+        </div>
+        <div class="catchup__viewport catchup__viewport--bottom">
+          <span>Viewport</span>
+        </div>
+      </div>
+      <p>The new rows cover the viewport, so the green flash disappears.</p>
+    </section>
+  </div>
+
+  <figcaption>
+    The scrollbar represents the full estimated table height, but only the row
+    window exists in the DOM. Blanking is the moment the viewport moves beyond
+    that window before JavaScript can move it too.
+  </figcaption>
+</figure>
+
+<style>
+  .catchup {
+    width: min(76rem, calc(100vw - 3rem));
+    margin-block: 2.5rem;
+    margin-inline: 50%;
+    font-family: var(--font-ui);
+    transform: translateX(-50%);
+  }
+
+  .catchup__premise {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    padding: 0.8rem 1rem;
+    font-size: 0.78rem;
+    text-align: center;
+  }
+
+  .catchup__premise span {
+    display: inline-flex;
+    gap: 0.25rem;
+  }
+
+  .catchup__premise i {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-style: normal;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .catchup__legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.55rem 1.25rem;
+    margin-block: 0.7rem;
+    color: var(--muted);
+    font-size: 0.68rem;
+  }
+
+  .catchup__legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .catchup__legend i {
+    display: inline-block;
+    width: 0.9rem;
+    height: 0.9rem;
+    border: 1px solid var(--line-strong);
+  }
+
+  .catchup__legend i[data-swatch="rows"] {
+    background: var(--paper);
+  }
+
+  .catchup__legend i[data-swatch="empty"] {
+    background: #16834b;
+  }
+
+  .catchup__legend i[data-swatch="viewport"] {
+    border: 2px solid var(--ink);
+    background: transparent;
+  }
+
+  .catchup__sequence {
+    display: grid;
+    grid-template-columns: 1fr 5rem 1fr 5rem 1fr;
+    align-items: center;
+  }
+
+  .catchup__step {
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+  }
+
+  .catchup__step header {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 3rem;
+    padding: 0.55rem 0.65rem;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.7rem;
+  }
+
+  .catchup__step header > b {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+  }
+
+  .catchup__step header span {
+    display: grid;
+  }
+
+  .catchup__step header strong {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    text-transform: uppercase;
+  }
+
+  .catchup__surface {
+    position: relative;
+    overflow: hidden;
+    height: 17rem;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        color-mix(in srgb, white 4%, transparent) 0 1.7rem,
+        transparent 1.7rem 3.4rem
+      ),
+      #16834b;
+  }
+
+  .catchup__surface::after {
+    content: "full estimated scroll height";
+    position: absolute;
+    z-index: 0;
+    right: 0.25rem;
+    top: 50%;
+    color: color-mix(in srgb, white 70%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.52rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    transform: translateY(-50%);
+  }
+
+  .catchup__rows {
+    position: absolute;
+    z-index: 1;
+    right: 0.9rem;
+    left: 0;
+    border-block: 1px solid var(--line-strong);
+    background: var(--paper);
+  }
+
+  .catchup__rows--top,
+  .catchup__rows--stale {
+    top: 1.2rem;
+  }
+
+  .catchup__rows--bottom {
+    bottom: 1.2rem;
+  }
+
+  .catchup__rows i {
+    display: block;
+    height: 1.55rem;
+    border-bottom: 1px solid var(--line);
+    background:
+      linear-gradient(var(--surface-strong), var(--surface-strong)) 0.55rem center / 24% 0.35rem no-repeat,
+      linear-gradient(var(--surface-strong), var(--surface-strong)) 58% center / 27% 0.35rem no-repeat,
+      var(--paper);
+  }
+
+  .catchup__rows i:last-of-type {
+    border-bottom: 0;
+  }
+
+  .catchup__rows span {
+    position: absolute;
+    top: -1.1rem;
+    left: 0.35rem;
+    color: var(--paper);
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .catchup__viewport {
+    display: grid;
+    position: absolute;
+    z-index: 3;
+    right: 1.2rem;
+    left: 0.35rem;
+    place-items: center;
+    height: 5.2rem;
+    border: 3px solid var(--ink);
+    background: color-mix(in srgb, var(--paper) 6%, transparent);
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .catchup__viewport--top {
+    top: 3.4rem;
+  }
+
+  .catchup__viewport--bottom {
+    bottom: 2.1rem;
+  }
+
+  .catchup__viewport small {
+    display: block;
+    margin-top: -1.5rem;
+    color: inherit;
+    font-size: 0.52rem;
+  }
+
+  .catchup__step--blank {
+    border-color: #16834b;
+  }
+
+  .catchup__step--blank .catchup__viewport {
+    border-color: white;
+    background: color-mix(in srgb, #16834b 75%, transparent);
+    color: white;
+  }
+
+  .catchup__step p,
+  .catchup figcaption {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.7rem;
+    line-height: 1.45;
+  }
+
+  .catchup__step p {
+    min-height: 4.2rem;
+    padding: 0.65rem;
+  }
+
+  .catchup__connector {
+    display: grid;
+    justify-items: center;
+    gap: 0.45rem;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .catchup__connector i {
+    position: relative;
+    width: 3.25rem;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .catchup__connector i::after {
+    content: "";
+    position: absolute;
+    top: -0.22rem;
+    right: 0;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-top: 2px solid var(--accent);
+    border-right: 2px solid var(--accent);
+    transform: rotate(45deg);
+  }
+
+  .catchup figcaption {
+    margin-top: 0.7rem;
+  }
+
+  @media (max-width: 54rem) {
+    .catchup__sequence {
+      grid-template-columns: 1fr;
+      gap: 0.6rem;
+    }
+
+    .catchup__connector {
+      min-height: 3rem;
+    }
+
+    .catchup__connector i {
+      width: 2px;
+      height: 1.5rem;
+    }
+
+    .catchup__connector i::after {
+      top: auto;
+      right: -0.22rem;
+      bottom: 0;
+      transform: rotate(135deg);
+    }
+  }
+
+  @media (max-width: 38rem) {
+    .catchup__premise {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .catchup__premise span {
+      justify-content: center;
+    }
+  }
+</style>

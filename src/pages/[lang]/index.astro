@@ -13,16 +13,7 @@ const profile = profileByLocale[locale];
 const visiblePosts = (await getCollection('posts'))
   .filter((post) => post.data.locale === locale && isVisiblePost(post))
   .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
-const featuredPostKeys = [
-  'interactive-writing',
-  'not-every-self-learning-journey-is',
-  'rough-edges-of-current-state-of-ai',
-];
-const featuredPosts = featuredPostKeys.flatMap((key) => {
-  const post = visiblePosts.find((entry) => entry.data.translationKey === key);
-  return post ? [post] : [];
-});
-const posts = [...featuredPosts, ...visiblePosts.filter((post) => !featuredPosts.includes(post))].slice(0, 3);
+const posts = visiblePosts.slice(0, 3);
 const [leadPost, ...secondaryPosts] = posts;
 const alternateUrl = `/${locale === 'en' ? 'id' : 'en'}/`;
 const contactSubject = locale === 'en' ? 'Engineering conversation' : 'Diskusi engineering';

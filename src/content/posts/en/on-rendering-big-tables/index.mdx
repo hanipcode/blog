@@ -1,0 +1,204 @@
+---
+title: On Rendering Complex Tables
+description: A practical look at virtualizing large tables to keep rendering fast and responsive.
+publishedAt: "2026-08-14T03:07:18Z"
+locale: en
+originalLocale: en
+translationKey: on-rendering-big-tables
+tags:
+  - JavaScript
+  - Performance
+  - Frontend
+draft: false
+---
+
+import BlankingTable from './BlankingTable.astro';
+import OverscanIllustration from './OverscanIllustration.astro';
+import OverscanDemo from './OverscanDemo';
+import ComplexTableDemo from './ComplexTableDemo';
+import ReactScrollPathIllustration from './ReactScrollPathIllustration.astro';
+import EventLoopTimeline from './EventLoopTimeline.astro';
+import BrowserCatchupIllustration from './BrowserCatchupIllustration.astro';
+import InverseStickyDemo from './InverseStickyDemo';
+import PooledInverseStickyTableDemo from './PooledInverseStickyTableDemo';
+
+Building a dashboard means building tables, lots and lots of it.
+
+at first we might start with small table, but then along the time we would start encountering a big table that doesn't make sense to be paginated.
+
+We might also encounter a table that need to be infinitely loaded, expanded, or even there we be table inside a table that can be infintely loaded.
+
+ok maybe now I already convinced you about this table problem. I first encounter this issue when seeing that a table that has polling mechanism to get the data start consuming high CPU during polling, and blocking the main thread. The INP for that table become really really worse.
+
+The initial solution we grab is usually to do virtualization rendering. fortunately there is already great table library called `Tanstack Virtual` and it work great on most case, sometime though, there might be still case of blanking
+
+<BlankingTable />
+
+we usually solve this by calculating what amount of to the height of the table on the top and bottom of it. for example if the table is 500px, then we add 500px above and below overscan
+
+<OverscanIllustration />
+
+<OverscanDemo client:visible />
+
+For a simple table especially if the tables are this overscan already does wonder but it can has issue with a few case. the first case would be if we have complex table, lets say the table has 15 Column, the first column a checkbox column that have select-all feature and some column like Status has chip, and some id Columns are truncated and has tooltip and also a copy button.
+
+<ComplexTableDemo client:visible />
+
+Now lets increase the fun and adding polling to the equation
+
+<ComplexTableDemo polling client:visible />
+
+now when you scroll normally you won't see any flash. but what about if you go very fast? or if your mouse scroll doesn't allow to go super fast, try dragging with the scroll handle, like the use case is if you want to go to the very bottom. do you see the green flash? I intentionally make the `tbody` green so the flashing is more obvious for illustration but you get the point
+
+you might think, but is 2000 to extreme of a case, but this demo is also simpler, like all the data is already in frontend and we don't do any formatting, checking, parsing, etc. also the table could be more complex than this or having more column.
+
+but even without all that, lets just for the sake of experiment turned it down to 250 rows
+
+<ComplexTableDemo rowCount={250} client:visible />
+
+drag the scroll handle up and down and you can see a green flash.
+
+
+# Problem
+
+so what is the problem really?
+
+lets start by take a look what happened when we scroll the virtualized table in react
+
+<ReactScrollPathIllustration />
+
+so yeah virtualizing table doesn't really come in free, because we need to calculate how far is the current scroll level from the top to decide the current viewport of that table.
+
+after we know the top offset,  React need to render the rows in the viewport plus the above and below overscan to then finally commit and update the DOM. because React also render the overscan so just adding bigger overscan does not guarantee to fix this if it make the work take longer time, like if the table is complex.
+
+so what happened if all this work take longer than the the time for the viewport to move beyond the mounted + overscan range? yep, we get the flashing thing.
+
+This happened because rendering complex rows can block the main thread, that is why this doesn't happened when the table is simply contain text. the more complex the component we have, the more time it will take. the timeline illustrated better below
+
+<EventLoopTimeline />
+
+<BrowserCatchupIllustration />
+
+
+> If your table is all text, there is a technique where you skip React and updating the textContent node directly, reusing the same DOM
+
+
+# solution
+
+this too long, get to the solution already!
+okay okay.
+So how do we fix this ? there is a three step to this
+
+### Calculating Offset
+
+A virtualizer needs a layout model to map the browser's current scroll offset to the rows that should be rendered.
+
+lets say we cap the row height to 40px, then 1000 rows, just means the total area is 40000px, nice and easy
+
+but this breaks when there is few complexity:
+1. we want to support wrapping in the table
+2. we want to support row with different size
+3. we want to support some interaction like expanding the table
+
+for this `Tanstack Table` expose the two api to measure and recalculate. which is `measureElement` and `resizeItem`
+
+
+For dense tables, wrapping and variable normal-row heights are usually avoidable. We usually prefer to truncate the content and adding some tooltip. performance wise wrapped table potentially make the recalculation happened as user scroll since the height is no longer fixed
+
+
+TanStack Virtual provides two APIs that we can use for recalculation to create the use case 3 for expanding row:
+
+- measureElement measures a mounted item and observes later size changes.
+- resizeItem(index, size) sets an item's size directly when the application already knows it.
+
+
+```tsx
+function ExpandableVirtualTable({ rows }: { rows: Row[] }) {
+  // ...setup
+  return (
+    <div ref={scrollRef} style={{ height: 400, overflow: "auto" }}>
+      <div
+        style={{
+          height: virtualizer.getTotalSize(),
+          position: "relative",
+        }}
+      >
+        {virtualizer.getVirtualItems().map((virtualItem) => {
+          const item = flatItems[virtualItem.index];
+          if (!item) return null;
+
+          return (
+            <div
+              key={virtualItem.key}
+              data-index={virtualItem.index}
+              // Normal rows are exactly 40px. Only unknown expansion-panel
+              // heights are measured and observed for later size changes.
+              ref={
+                item.kind === "details"
+                  ? virtualizer.measureElement
+                  : undefined
+              }
+              style={{
+                position: "absolute",
+                transform: `translateY(${virtualItem.start}px)`,
+                width: "100%",
+                height: item.kind === "row" ? 40 : undefined,
+              }}
+            >
+              {item.kind === "row" ? (
+                <button onClick={() => toggleExpanded(item.row.id)}>
+                  {expanded.has(item.row.id) ? "Collapse" : "Expand"}{" "}
+                  {item.row.name}
+                </button>
+              ) : (
+                <LargeDetails row={item.row} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+```
+
+
+### Inverse sticky technique
+
+This technique comes from Pierre's article, [On Rendering Diffs](https://pierre.computer/writing/on-rendering-diffs).
+
+and I am merely copying and adapting it to be used on table. I really recommend you to read the article, it is really interesting.
+
+here is how it works from the article itself
+
+> ... we invert the usual sticky behavior. Instead of pinning the top of the rendered content to the top of the viewport as you scroll down, the bottom edge of the rendered region sticks to the bottom of the viewport when you scroll past it. When you scroll back up, the top edge sticks to the top of the viewport.
+
+> ... This gives us native scrolling while the viewport is inside the rendered range. If JavaScript falls behind, the rendered region sticks to one edge instead of scrolling away and exposing blank space. ...
+
+This decouples native browser scrolling from JavaScript’s range calculation/rendering. Without the sticky technique, if JavaScript takes too long to calculate and render the next range, the browser can scroll past the currently rendered content and expose blank space. By making the rendered content sticky, it stays pinned to the edge of the viewport until JavaScript catches up, greatly reducing blanking.
+
+<InverseStickyDemo client:visible />
+
+> this demo intentionally use small overscan per side to make blanking and the inverse sticky scrolling easier to observe
+
+
+### DOM pooling
+
+Virtualization make us only render mounted DOM. but it can still make the us churn a lot of work during agressive scroll because a typical virtualizer removes rows that leave the rendered range and mounts new ones in their place. In our Dashboard, each row can contain checkboxes, chips, tooltips, copy buttons, event handlers, and many table cells. Recreating those elements repeatedly produces allocations that eventually need to be cleaned up, potentially adding garbage-collection pauses to the scrolling path.
+
+To reduce that work, we treats the mounted rows as a pool of reusable slots. If the virtualizer needs 30 rows, We creates approximately 30 physical row and cell shells. As the rendered range changes, each slot is reassigned to another record instead of destroying its DOM and creating a replacement. The slot receives the new row index, position, height, values, and event handlers.
+
+Reusing a row safely requires separating its physical shell from its record-specific state. so we keys the row shell by its pool slot, but keys stateful cell content by the record’s stable identity. When a slot changes from one record to another, React preserves the `<tr>` and `<td>` elements while resetting consumer state such as copied indicators, uncontrolled inputs, and other item-specific UI.
+
+This make the table has a pool of reusable rows and cells shells, and only destroying and recreating the content of the column, not the whole rows.
+
+
+now lets combine all the our approach to re-tackle our complex table:
+
+<PooledInverseStickyTableDemo client:visible />
+
+
+
+## Conclusion
+
+This has been a very cool experimentation. but even though I feel like this is just me standing on the shoulder of giants, I just reuse the Virtual component from `Tanstack` and the inverse technique from Pierre's. but at least am really happy with the result. by using this technique at work the memory for our complex tables reduced by more than 50%, and there is no blank anymore when scrolling !

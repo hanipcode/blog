@@ -1,0 +1,263 @@
+.pooled-inverse-demo {
+  width: min(78rem, calc(100vw - 3rem));
+  margin-block: 2.5rem;
+  margin-inline: 50%;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  font-family: var(--font-ui);
+  isolation: isolate;
+  transform: translateX(-50%);
+}
+
+.pooled-inverse-demo__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.pooled-inverse-demo__toolbar > div {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.pooled-inverse-demo__toolbar strong {
+  font-size: 0.82rem;
+}
+
+.pooled-inverse-demo__toolbar span,
+.pooled-inverse-demo__note {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.pooled-inverse-demo button {
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--accent);
+  padding: 0.35rem 0.6rem;
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.pooled-inverse-demo__metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.2rem;
+  padding: 0.45rem 1rem;
+  background: var(--paper);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+}
+
+.pooled-inverse-demo__scroller {
+  overflow: auto;
+  height: 24rem;
+  overflow-anchor: none;
+  overscroll-behavior: none;
+}
+
+.pooled-inverse-demo__content,
+.pooled-inverse-demo__header,
+.pooled-inverse-demo__virtual-body,
+.pooled-inverse-demo__body-table {
+  min-width: 110rem;
+}
+
+.pooled-inverse-demo__content {
+  position: relative;
+}
+
+.pooled-inverse-demo__header {
+  display: block;
+  position: sticky;
+  z-index: 40;
+  top: 0;
+  width: 100%;
+  height: 40px;
+  border-collapse: collapse;
+  background: var(--surface-strong);
+}
+
+.pooled-inverse-demo__header thead,
+.pooled-inverse-demo__header tr,
+.pooled-inverse-demo__body-table,
+.pooled-inverse-demo__body-table tbody {
+  display: block;
+  position: relative;
+  width: 100%;
+}
+
+.pooled-inverse-demo__header tr,
+.pooled-inverse-demo__body-table tr {
+  display: grid;
+  grid-template-columns:
+    5rem 11rem 10rem 11rem 8rem 8rem 10rem 6rem 6rem 7rem 11rem 8rem 7rem;
+  min-width: 110rem;
+}
+
+.pooled-inverse-demo__header th {
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  min-width: 0;
+  height: 40px;
+  padding: 0.45rem 0.65rem;
+  border-block: 1px solid var(--line-strong);
+  border-right: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.pooled-inverse-demo__header th:first-child {
+  justify-content: center;
+}
+
+.pooled-inverse-demo__virtual-body {
+  position: relative;
+  background: #16834b;
+  contain: layout style;
+}
+
+.pooled-inverse-demo__range-buffer {
+  contain: layout size;
+}
+
+.pooled-inverse-demo__row-window {
+  width: 100%;
+  contain: layout style inline-size;
+  isolation: isolate;
+}
+
+.pooled-inverse-demo__underlay {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background-color: var(--paper);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 40px,
+    var(--line) 40px,
+    var(--line) 41px
+  );
+}
+
+.pooled-inverse-demo__body-table {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  border-collapse: collapse;
+}
+
+.pooled-inverse-demo__body-table tbody {
+  height: 100%;
+}
+
+.pooled-inverse-demo__body-table tr {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.pooled-inverse-demo__body-table tr[data-selected="true"] {
+  background: color-mix(in srgb, var(--accent-soft) 55%, var(--paper));
+}
+
+.pooled-inverse-demo__body-table td {
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  align-items: center;
+  min-width: 0;
+  height: 41px;
+  padding: 0.45rem 0.65rem;
+  border-right: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  white-space: nowrap;
+}
+
+.pooled-inverse-demo__body-table td:first-child {
+  justify-content: center;
+}
+
+.pooled-inverse-demo input[type="checkbox"] {
+  width: 0.9rem;
+  height: 0.9rem;
+  accent-color: var(--accent);
+}
+
+.pooled-inverse-demo__copyable {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  width: 100%;
+  gap: 0.35rem;
+}
+
+.pooled-inverse-demo__truncate {
+  overflow: hidden;
+  min-width: 0;
+  text-overflow: ellipsis;
+}
+
+.pooled-inverse-demo__copyable button {
+  flex: none;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.62rem;
+}
+
+.pooled-inverse-demo__chip {
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 0.15rem 0.45rem;
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.pooled-inverse-demo__chip[data-tone="completed"],
+.pooled-inverse-demo__chip[data-tone="low"] {
+  border-color: var(--consulting);
+  background: color-mix(in srgb, var(--consulting) 14%, transparent);
+}
+
+.pooled-inverse-demo__chip[data-tone="pending"],
+.pooled-inverse-demo__chip[data-tone="medium"],
+.pooled-inverse-demo__chip[data-tone="review"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.pooled-inverse-demo__chip[data-tone="failed"],
+.pooled-inverse-demo__chip[data-tone="high"] {
+  border-color: #a23b32;
+  background: color-mix(in srgb, #a23b32 15%, transparent);
+}
+
+.pooled-inverse-demo__note {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--line);
+  line-height: 1.45;
+}
+
+@media (max-width: 42rem) {
+  .pooled-inverse-demo__toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -1402,6 +1402,9 @@ main {
 .prose svg {
   max-width: 100%;
 }
+.prose img {
+  height: auto;
+}
 .prose blockquote {
   margin-inline: 0;
   padding-left: 1.25rem;

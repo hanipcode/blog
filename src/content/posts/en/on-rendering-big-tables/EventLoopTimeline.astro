@@ -1,0 +1,269 @@
+<figure class="event-loop-timeline">
+  <header>
+    <strong>One fast scrollbar drag during a polling update</strong>
+    <span>A frame has roughly 16 ms; the main-thread task below takes 72 ms.</span>
+  </header>
+
+  <div class="event-loop-timeline__viewport">
+    <div class="event-loop-timeline__chart">
+      <div class="event-loop-timeline__ticks" aria-hidden="true">
+        <span></span>
+        <b>0 ms</b>
+        <b>16 ms</b>
+        <b>32 ms</b>
+        <b>48 ms</b>
+        <b>64 ms</b>
+        <b>80 ms</b>
+      </div>
+
+      <div class="event-loop-timeline__lane">
+        <strong>Compositor</strong>
+        <span class="event-loop-timeline__block event-loop-timeline__block--input">
+          Drag input
+        </span>
+        <span class="event-loop-timeline__block event-loop-timeline__block--scroll">
+          Viewport keeps moving and painting
+        </span>
+      </div>
+
+      <div class="event-loop-timeline__lane">
+        <strong>Main thread</strong>
+        <span class="event-loop-timeline__block event-loop-timeline__block--task">
+          Long task: parse poll response -> replace rows -> React render -> layout
+        </span>
+        <span class="event-loop-timeline__block event-loop-timeline__block--commit">
+          Commit rows
+        </span>
+      </div>
+
+      <div class="event-loop-timeline__lane">
+        <strong>Event queue</strong>
+        <span class="event-loop-timeline__block event-loop-timeline__block--waiting">
+          Scroll handler is ready, but must wait for the current task
+        </span>
+        <span class="event-loop-timeline__block event-loop-timeline__block--handler">
+          Run handler
+        </span>
+      </div>
+
+      <div class="event-loop-timeline__lane event-loop-timeline__lane--frames">
+        <strong>Frame deadlines</strong>
+        <span></span>
+        <span data-frame="missed">Missed</span>
+        <span data-frame="missed">Missed</span>
+        <span data-frame="missed">Missed</span>
+        <span data-frame="missed">Missed</span>
+        <span data-frame="ready">Rows ready</span>
+      </div>
+
+      <div class="event-loop-timeline__exposure">
+        <span>Viewport can expose the empty green scroll surface during this gap</span>
+      </div>
+    </div>
+  </div>
+
+  <figcaption>
+    The scroll event is not lost. It is queued behind the long task. Native
+    composited scrolling can still advance, so the viewport moves before the
+    virtualizer's JavaScript gets a chance to calculate and commit the next rows.
+  </figcaption>
+</figure>
+
+<style>
+  .event-loop-timeline {
+    width: min(72rem, calc(100vw - 3rem));
+    margin-block: 2.5rem;
+    margin-inline: 50%;
+    font-family: var(--font-ui);
+    transform: translateX(-50%);
+  }
+
+  .event-loop-timeline > header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 1px solid var(--line-strong);
+    border-bottom: 0;
+    background: var(--surface);
+    padding: 0.75rem 0.9rem;
+  }
+
+  .event-loop-timeline > header strong {
+    font-size: 0.78rem;
+  }
+
+  .event-loop-timeline > header span {
+    color: var(--muted);
+    font-size: 0.68rem;
+    text-align: right;
+  }
+
+  .event-loop-timeline__viewport {
+    overflow-x: auto;
+    border: 1px solid var(--line-strong);
+    background: var(--paper);
+  }
+
+  .event-loop-timeline__chart {
+    min-width: 58rem;
+    padding: 0.8rem;
+    background-image: repeating-linear-gradient(
+      to right,
+      transparent 0 calc((100% - 8rem) / 6 - 1px),
+      color-mix(in srgb, var(--line) 55%, transparent)
+        calc((100% - 8rem) / 6 - 1px) calc((100% - 8rem) / 6)
+    );
+    background-position: 8rem 0;
+    background-size: calc(100% - 8rem) 100%;
+    background-repeat: no-repeat;
+  }
+
+  .event-loop-timeline__ticks,
+  .event-loop-timeline__lane,
+  .event-loop-timeline__exposure {
+    display: grid;
+    grid-template-columns: 8rem repeat(6, 1fr);
+  }
+
+  .event-loop-timeline__ticks {
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+  }
+
+  .event-loop-timeline__ticks b {
+    padding-left: 0.35rem;
+    font-weight: 500;
+  }
+
+  .event-loop-timeline__lane {
+    min-height: 3.2rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .event-loop-timeline__lane > strong {
+    display: flex;
+    align-items: center;
+    padding-right: 0.75rem;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.63rem;
+    text-transform: uppercase;
+  }
+
+  .event-loop-timeline__block {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    min-height: 2.2rem;
+    margin: 0.25rem 0.12rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 0.2rem;
+    padding: 0.3rem 0.45rem;
+    font-size: 0.64rem;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .event-loop-timeline__block--input {
+    grid-column: 2;
+    background: var(--surface-strong);
+  }
+
+  .event-loop-timeline__block--scroll {
+    grid-column: 3 / 8;
+    border-color: var(--consulting);
+    background: color-mix(in srgb, var(--consulting) 16%, var(--paper));
+  }
+
+  .event-loop-timeline__block--task {
+    grid-column: 2 / 7;
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .event-loop-timeline__block--commit {
+    grid-column: 7 / 8;
+    border-color: var(--consulting);
+    background: color-mix(in srgb, var(--consulting) 16%, var(--paper));
+  }
+
+  .event-loop-timeline__block--waiting {
+    grid-column: 3 / 7;
+    border-style: dashed;
+    color: var(--muted);
+  }
+
+  .event-loop-timeline__block--handler {
+    grid-column: 7 / 8;
+    background: var(--surface-strong);
+  }
+
+  .event-loop-timeline__lane--frames span {
+    display: grid;
+    place-items: center;
+    align-self: center;
+    min-height: 1.7rem;
+    margin: 0.25rem;
+    border-radius: 0.2rem;
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .event-loop-timeline__lane--frames span[data-frame="missed"] {
+    border: 1px solid #a23b32;
+    background: color-mix(in srgb, #a23b32 14%, var(--paper));
+    color: #a23b32;
+  }
+
+  :global(:root[data-theme="dark"])
+    .event-loop-timeline__lane--frames
+    span[data-frame="missed"] {
+    color: #f38f84;
+  }
+
+  .event-loop-timeline__lane--frames span[data-frame="ready"] {
+    border: 1px solid var(--consulting);
+    background: color-mix(in srgb, var(--consulting) 16%, var(--paper));
+  }
+
+  .event-loop-timeline__exposure span {
+    grid-column: 3 / 7;
+    margin-top: 0.7rem;
+    border-top: 3px solid #16834b;
+    color: #16834b;
+    padding-top: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  :global(:root[data-theme="dark"])
+    .event-loop-timeline__exposure
+    span {
+    color: #56d68e;
+  }
+
+  .event-loop-timeline figcaption {
+    margin-top: 0.7rem;
+    color: var(--muted);
+    font-size: 0.7rem;
+    line-height: 1.45;
+  }
+
+  @media (max-width: 42rem) {
+    .event-loop-timeline > header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .event-loop-timeline > header span {
+      text-align: left;
+    }
+  }
+</style>

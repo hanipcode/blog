@@ -2,14 +2,16 @@
 interface Props {
   id: string;
   title: string;
+  start?: number;
 }
 
-const { id, title } = Astro.props;
+const { id, title, start } = Astro.props;
+const startQuery = start ? `?start=${start}` : '';
 ---
 
 <div class="embed youtube">
   <iframe
-    src={`https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}`}
+    src={`https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}${startQuery}`}
     title={title}
     loading="lazy"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

@@ -1,0 +1,145 @@
+<figure class="overscan-illustration">
+  <div class="overscan-illustration__frame">
+    <div class="overscan-illustration__label">Full table height</div>
+    <div class="overscan-illustration__unmounted">
+      <span>Unmounted rows</span>
+      <i></i><i></i><i></i>
+    </div>
+    <div class="overscan-illustration__buffer">
+      <span>500 px top overscan</span>
+      <small>mounted, outside the viewport</small>
+    </div>
+    <div class="overscan-illustration__viewport">
+      <strong>Browser viewport</strong>
+      <div><span>#0321</span><span>Merchant 46</span><span>$8,240</span></div>
+      <div><span>#0322</span><span>Merchant 12</span><span>$1,940</span></div>
+      <div><span>#0323</span><span>Merchant 89</span><span>$4,120</span></div>
+    </div>
+    <div class="overscan-illustration__buffer">
+      <span>500 px bottom overscan</span>
+      <small>mounted, outside the viewport</small>
+    </div>
+    <div class="overscan-illustration__unmounted overscan-illustration__unmounted--bottom">
+      <i></i><i></i><i></i>
+      <span>Unmounted rows</span>
+    </div>
+  </div>
+  <figcaption>
+    The virtualizer mounts the viewport plus a buffer on both sides. Everything
+    beyond that range remains represented by empty height, not DOM rows.
+  </figcaption>
+</figure>
+
+<style>
+  .overscan-illustration {
+    margin: 2.5rem 0;
+    font-family: var(--font-mono);
+  }
+
+  .overscan-illustration__frame {
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    background: var(--paper);
+  }
+
+  .overscan-illustration__label {
+    padding: 0.45rem 0.75rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface-strong);
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .overscan-illustration__unmounted {
+    display: grid;
+    gap: 0.35rem;
+    min-height: 5rem;
+    padding: 0.75rem;
+    color: var(--muted);
+    font-size: 0.68rem;
+  }
+
+  .overscan-illustration__unmounted i {
+    display: block;
+    height: 1px;
+    background: repeating-linear-gradient(
+      to right,
+      var(--line) 0 0.35rem,
+      transparent 0.35rem 0.7rem
+    );
+  }
+
+  .overscan-illustration__unmounted--bottom {
+    align-content: end;
+  }
+
+  .overscan-illustration__buffer {
+    display: grid;
+    gap: 0.15rem;
+    padding: 0.8rem 1rem;
+    border-block: 1px dashed var(--accent);
+    background: var(--accent-soft);
+    color: var(--ink);
+    font-size: 0.74rem;
+  }
+
+  .overscan-illustration__buffer small {
+    color: var(--muted);
+    font-family: var(--font-ui);
+    font-size: 0.68rem;
+  }
+
+  .overscan-illustration__viewport {
+    position: relative;
+    z-index: 1;
+    margin: 0.8rem -0.35rem;
+    border: 2px solid var(--ink);
+    border-radius: 0.25rem;
+    background: var(--surface);
+    box-shadow: 0 0 0 0.35rem color-mix(in srgb, var(--ink) 10%, transparent);
+  }
+
+  .overscan-illustration__viewport strong {
+    display: block;
+    padding: 0.45rem 0.75rem;
+    border-bottom: 1px solid var(--line-strong);
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .overscan-illustration__viewport div {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr 5.5rem;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.7rem;
+  }
+
+  .overscan-illustration__viewport div:last-child {
+    border-bottom: 0;
+  }
+
+  .overscan-illustration__viewport span {
+    overflow: hidden;
+    padding: 0.5rem 0.7rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .overscan-illustration__viewport span:last-child {
+    text-align: right;
+  }
+
+  .overscan-illustration figcaption {
+    margin-top: 0.65rem;
+    color: var(--muted);
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    line-height: 1.5;
+  }
+</style>

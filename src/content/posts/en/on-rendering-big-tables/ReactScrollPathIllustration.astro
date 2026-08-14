@@ -1,0 +1,170 @@
+<figure class="react-path">
+  <header>
+    <strong>What JavaScript and React do after a scroll event</strong>
+    <span>This entire path runs before updated rows are ready to display.</span>
+  </header>
+
+  <div class="react-path__flow">
+    <section>
+      <b>1</b>
+      <div>
+        <strong>Scroll event reaches JavaScript</strong>
+        <span>The handler receives the latest scroll position.</span>
+      </div>
+    </section>
+    <i></i>
+
+    <section>
+      <b>2</b>
+      <div>
+        <strong>TanStack reads scrollTop</strong>
+        <span>The virtualizer learns where the viewport moved.</span>
+      </div>
+    </section>
+    <i></i>
+
+    <section>
+      <b>3</b>
+      <div>
+        <strong>Calculate visible rows and overscan</strong>
+        <span>Choose the row indexes that should now exist in the DOM.</span>
+      </div>
+    </section>
+    <i></i>
+
+    <section class="react-path__cost">
+      <b>4</b>
+      <div>
+        <strong>React renders the mounted rows</strong>
+        <span>
+          Run every row and cell component, including checkboxes, chips,
+          tooltips, copy controls, and formatting.
+        </span>
+      </div>
+    </section>
+    <i></i>
+
+    <section class="react-path__cost">
+      <b>5</b>
+      <div>
+        <strong>React reconciles and commits</strong>
+        <span>Compare trees, remove old rows, and update the DOM.</span>
+      </div>
+    </section>
+    <i></i>
+
+    <section>
+      <b>6</b>
+      <div>
+        <strong>Browser performs style, layout, and paint</strong>
+        <span>The new DOM finally becomes updated pixels.</span>
+      </div>
+    </section>
+  </div>
+
+  <figcaption>
+    The cost is the complete path, not one row in isolation. More mounted rows,
+    columns, and cell features increase the work in steps 4 through 6.
+  </figcaption>
+</figure>
+
+<style>
+  .react-path {
+    margin-block: 2.5rem;
+    font-family: var(--font-ui);
+  }
+
+  .react-path > header {
+    display: grid;
+    gap: 0.1rem;
+    border: 1px solid var(--line-strong);
+    border-bottom: 0;
+    background: var(--surface-strong);
+    padding: 0.75rem 0.9rem;
+  }
+
+  .react-path > header strong {
+    font-size: 0.78rem;
+  }
+
+  .react-path > header span,
+  .react-path figcaption {
+    color: var(--muted);
+    font-size: 0.68rem;
+    line-height: 1.45;
+  }
+
+  .react-path__flow {
+    border: 1px solid var(--line-strong);
+    background: var(--paper);
+    padding: 0.8rem;
+  }
+
+  .react-path__flow section {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-height: 4rem;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    padding: 0.65rem;
+  }
+
+  .react-path__flow section.react-path__cost {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .react-path__flow section > b {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+  }
+
+  .react-path__flow section > div {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .react-path__flow section strong {
+    font-size: 0.74rem;
+  }
+
+  .react-path__flow section span {
+    color: var(--muted);
+    font-size: 0.66rem;
+    line-height: 1.4;
+  }
+
+  .react-path__flow > i {
+    display: block;
+    position: relative;
+    width: 2px;
+    height: 1.2rem;
+    margin-inline: auto;
+    background: var(--line-strong);
+  }
+
+  .react-path__flow > i::after {
+    content: "";
+    position: absolute;
+    right: -0.2rem;
+    bottom: 0;
+    width: 0.38rem;
+    height: 0.38rem;
+    border-right: 2px solid var(--line-strong);
+    border-bottom: 2px solid var(--line-strong);
+    transform: rotate(45deg);
+  }
+
+  .react-path figcaption {
+    margin-top: 0.7rem;
+  }
+</style>

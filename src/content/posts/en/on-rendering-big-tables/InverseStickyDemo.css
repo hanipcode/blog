@@ -1,0 +1,149 @@
+.inverse-sticky-demo {
+  width: min(68rem, calc(100vw - 3rem));
+  margin-block: 2.5rem;
+  margin-inline: 50%;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  font-family: var(--font-ui);
+  transform: translateX(-50%);
+}
+
+.inverse-sticky-demo__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.inverse-sticky-demo__toolbar > div:first-child,
+.inverse-sticky-demo__panel > header {
+  display: grid;
+  gap: 0.12rem;
+}
+
+.inverse-sticky-demo__toolbar strong,
+.inverse-sticky-demo__panel > header strong {
+  font-size: 0.82rem;
+}
+
+.inverse-sticky-demo__toolbar span,
+.inverse-sticky-demo__panel > header span,
+.inverse-sticky-demo__note {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.inverse-sticky-demo__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.inverse-sticky-demo button {
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--paper);
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.inverse-sticky-demo button.inverse-sticky-demo__secondary {
+  background: transparent;
+  color: var(--accent);
+}
+
+.inverse-sticky-demo__comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.inverse-sticky-demo__panel {
+  min-width: 0;
+  margin: 0;
+}
+
+.inverse-sticky-demo__panel + .inverse-sticky-demo__panel {
+  border-left: 1px solid var(--line-strong);
+}
+
+.inverse-sticky-demo__panel > header {
+  padding: 0.7rem 0.85rem;
+  border-bottom: 1px solid var(--line-strong);
+  background: var(--surface-strong);
+}
+
+.inverse-sticky-demo__scroller {
+  overflow: auto;
+  height: 256px;
+  background: #16834b;
+  overscroll-behavior: contain;
+  overflow-anchor: none;
+}
+
+.inverse-sticky-demo__spacer {
+  position: relative;
+  min-width: 22rem;
+}
+
+.inverse-sticky-demo__window {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.inverse-sticky-demo__window--sticky {
+  position: sticky;
+}
+
+.inverse-sticky-demo__row {
+  display: grid;
+  position: absolute;
+  top: 0;
+  left: 0;
+  grid-template-columns: 5rem minmax(8rem, 1fr) 6rem;
+  width: 100%;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.inverse-sticky-demo__row span {
+  overflow: hidden;
+  padding: 0.45rem 0.65rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inverse-sticky-demo__row span:last-child {
+  color: var(--muted);
+  text-align: right;
+}
+
+.inverse-sticky-demo__note {
+  margin: 0;
+  padding: 0.7rem 1rem;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 48rem) {
+  .inverse-sticky-demo__toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .inverse-sticky-demo__comparison {
+    grid-template-columns: 1fr;
+  }
+
+  .inverse-sticky-demo__panel + .inverse-sticky-demo__panel {
+    border-top: 1px solid var(--line-strong);
+    border-left: 0;
+  }
+}

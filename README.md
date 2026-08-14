@@ -50,6 +50,14 @@ pnpm cleanup:posts
 
 Create posts under `src/content/posts/<locale>/<slug>/index.mdx`. Post-specific Astro components can live in the same folder and be imported with a relative path. Shared components live under `src/components/mdx`.
 
+Bootstrap a metadata-only draft with OpenCode and GPT Luna:
+
+```bash
+just create-post "My post title" "What the post will cover"
+```
+
+The title and post description are used to infer the locale, slug, polished description, tags, and remaining frontmatter. The generated file has no body and remains a draft until it is ready to publish.
+
 Counterpart translations use the same relative path in the other locale. `pnpm build` does not generate or validate translations; it only runs Astro type checking and creates the static site in `dist`.
 
 Set `devOnly: true` in both localized files to show a post with `pnpm dev` while excluding it from production listings and routes.

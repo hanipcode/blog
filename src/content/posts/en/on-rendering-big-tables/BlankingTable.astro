@@ -1,0 +1,314 @@
+<tanstack-blanking-demo class="blanking-demo">
+  <div class="blanking-demo__intro">
+    <div>
+      <strong>10,000 rows, about 20 mounted</strong>
+      <span>DOM updates are deliberately delayed by 180 ms.</span>
+    </div>
+    <button type="button" data-jump>Jump to row 7,500</button>
+  </div>
+
+  <div class="blanking-demo__status" data-status aria-live="polite">
+    Preparing the virtual table...
+  </div>
+
+  <div class="blanking-demo__table" role="table" aria-label="Virtualized transactions">
+    <div class="blanking-demo__header" role="row">
+      <span role="columnheader">ID</span>
+      <span role="columnheader">Merchant</span>
+      <span role="columnheader">Amount</span>
+    </div>
+    <div class="blanking-demo__scroller" data-scroller tabindex="0">
+      <div class="blanking-demo__spacer" data-spacer>
+        <div class="blanking-demo__rows" data-rows role="rowgroup"></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="blanking-demo__note">
+    Drag the scrollbar thumb quickly or use the jump button. The browser scrolls
+    immediately, while JavaScript commits the next TanStack range later.
+  </p>
+</tanstack-blanking-demo>
+
+<script>
+  import {
+    Virtualizer,
+    elementScroll,
+    observeElementOffset,
+    observeElementRect,
+    type VirtualItem,
+  } from '@tanstack/virtual-core';
+
+  const ROW_COUNT = 10_000;
+  const ROW_HEIGHT = 38;
+  const RENDER_DELAY = 180;
+
+  class TanstackBlankingDemo extends HTMLElement {
+    private abortController: AbortController | undefined;
+    private cleanupVirtualizer: (() => void) | undefined;
+    private renderTimer: number | undefined;
+    private statusFrame: number | undefined;
+    private renderedItems: ReadonlyArray<VirtualItem> = [];
+
+    connectedCallback() {
+      const scroller = this.querySelector('[data-scroller]');
+      const spacer = this.querySelector('[data-spacer]');
+      const rows = this.querySelector('[data-rows]');
+      const status = this.querySelector('[data-status]');
+      const jump = this.querySelector('[data-jump]');
+
+      if (
+        !(scroller instanceof HTMLDivElement) ||
+        !(spacer instanceof HTMLDivElement) ||
+        !(rows instanceof HTMLDivElement) ||
+        !(status instanceof HTMLDivElement) ||
+        !(jump instanceof HTMLButtonElement)
+      ) {
+        return;
+      }
+
+      this.abortController = new AbortController();
+      const { signal } = this.abortController;
+
+      const virtualizer = new Virtualizer<HTMLDivElement, HTMLElement>({
+        count: ROW_COUNT,
+        getScrollElement: () => scroller,
+        estimateSize: () => ROW_HEIGHT,
+        overscan: 4,
+        scrollToFn: elementScroll,
+        observeElementOffset,
+        observeElementRect,
+        onChange: (instance) => {
+          window.clearTimeout(this.renderTimer);
+          this.renderTimer = window.setTimeout(() => {
+            this.renderRows(instance.getVirtualItems(), rows, spacer, status);
+          }, RENDER_DELAY);
+        },
+      });
+
+      this.cleanupVirtualizer = virtualizer._didMount();
+      virtualizer._willUpdate();
+      this.renderRows(virtualizer.getVirtualItems(), rows, spacer, status);
+
+      scroller.addEventListener(
+        'scroll',
+        () => {
+          if (this.statusFrame !== undefined) return;
+          this.statusFrame = requestAnimationFrame(() => {
+            this.statusFrame = undefined;
+            this.updateStatus(scroller, status);
+          });
+        },
+        { passive: true, signal },
+      );
+
+      jump.addEventListener(
+        'click',
+        () => {
+          const target = scroller.scrollTop < ROW_HEIGHT * 3_000 ? 7_500 : 100;
+          scroller.scrollTop = target * ROW_HEIGHT;
+          jump.textContent = target === 7_500 ? 'Jump near the top' : 'Jump to row 7,500';
+        },
+        { signal },
+      );
+    }
+
+    disconnectedCallback() {
+      this.abortController?.abort();
+      this.cleanupVirtualizer?.();
+      window.clearTimeout(this.renderTimer);
+      if (this.statusFrame !== undefined) cancelAnimationFrame(this.statusFrame);
+    }
+
+    private renderRows(
+      items: ReadonlyArray<VirtualItem>,
+      rows: HTMLDivElement,
+      spacer: HTMLDivElement,
+      status: HTMLDivElement,
+    ) {
+      this.renderedItems = items;
+      spacer.style.height = `${ROW_COUNT * ROW_HEIGHT}px`;
+
+      const fragment = document.createDocumentFragment();
+      for (const item of items) {
+        const row = document.createElement('div');
+        row.className = 'blanking-demo__row';
+        row.setAttribute('role', 'row');
+        row.style.transform = `translateY(${item.start}px)`;
+        row.style.height = `${item.size}px`;
+
+        const id = document.createElement('span');
+        id.setAttribute('role', 'cell');
+        id.textContent = `#${String(item.index + 1).padStart(5, '0')}`;
+
+        const merchant = document.createElement('span');
+        merchant.setAttribute('role', 'cell');
+        merchant.textContent = `Merchant ${(item.index % 137) + 1}`;
+
+        const amount = document.createElement('span');
+        amount.setAttribute('role', 'cell');
+        amount.textContent = `$${((item.index * 7919) % 50_000).toLocaleString()}`;
+
+        row.append(id, merchant, amount);
+        fragment.append(row);
+      }
+
+      rows.replaceChildren(fragment);
+      const scroller = this.querySelector('[data-scroller]');
+      if (scroller instanceof HTMLDivElement) this.updateStatus(scroller, status);
+    }
+
+    private updateStatus(scroller: HTMLDivElement, status: HTMLDivElement) {
+      const first = this.renderedItems.at(0);
+      const last = this.renderedItems.at(-1);
+      if (!first || !last) return;
+
+      const viewportStart = scroller.scrollTop;
+      const viewportEnd = viewportStart + scroller.clientHeight;
+      const hasVisibleRows = last.end > viewportStart && first.start < viewportEnd;
+
+      this.toggleAttribute('data-blank', !hasVisibleRows);
+      status.textContent = hasVisibleRows
+        ? `Rendered rows ${first.index + 1}-${last.index + 1} · ${this.renderedItems.length} DOM rows`
+        : 'Blank: the viewport moved beyond the last committed row range';
+    }
+  }
+
+  if (!customElements.get('tanstack-blanking-demo')) {
+    customElements.define('tanstack-blanking-demo', TanstackBlankingDemo);
+  }
+</script>
+
+<!-- The script creates rows at runtime, so the component's uniquely-prefixed
+     selectors must remain global instead of relying on Astro scope attributes. -->
+<style is:global>
+  .blanking-demo {
+    display: block;
+    margin-block: 2.5rem;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    font-family: var(--font-ui);
+  }
+
+  .blanking-demo__intro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .blanking-demo__intro div {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .blanking-demo__intro strong {
+    font-size: 0.82rem;
+  }
+
+  .blanking-demo__intro span,
+  .blanking-demo__note {
+    color: var(--muted);
+    font-size: 0.72rem;
+  }
+
+  .blanking-demo button {
+    flex: none;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--paper);
+    padding: 0.45rem 0.75rem;
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .blanking-demo__status {
+    padding: 0.45rem 1rem;
+    background: var(--paper);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+  }
+
+  .blanking-demo[data-blank] .blanking-demo__status {
+    background: var(--accent);
+    color: var(--paper);
+  }
+
+  .blanking-demo__table {
+    min-width: 0;
+    background: var(--paper);
+  }
+
+  .blanking-demo__header,
+  .blanking-demo__row {
+    display: grid;
+    grid-template-columns: 6rem minmax(9rem, 1fr) 7rem;
+    min-width: 26rem;
+  }
+
+  .blanking-demo__header {
+    padding-right: 0.8rem;
+    border-block: 1px solid var(--line-strong);
+    background: var(--surface-strong);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .blanking-demo__header span,
+  .blanking-demo__row span {
+    overflow: hidden;
+    padding: 0.55rem 0.75rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .blanking-demo__header span:last-child,
+  .blanking-demo__row span:last-child {
+    text-align: right;
+  }
+
+  .blanking-demo__scroller {
+    position: relative;
+    overflow: auto;
+    height: 19rem;
+    overscroll-behavior: contain;
+  }
+
+  .blanking-demo__spacer,
+  .blanking-demo__rows {
+    position: relative;
+    min-width: 26rem;
+  }
+
+  .blanking-demo__row {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+
+  .blanking-demo__note {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--line);
+    line-height: 1.45;
+  }
+
+  @media (max-width: 36rem) {
+    .blanking-demo__intro {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>
